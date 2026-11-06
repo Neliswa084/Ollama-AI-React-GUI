@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import type { Message, OllamaResponse } from './types'
 import logo from './assets/khanya-logo.svg'
+import { getStats } from './utils/stats'
 
 import './App.css'
 
@@ -38,11 +39,12 @@ function App() {
 
       const data: OllamaResponse = await res.json()
 
-      const aiMessage: Message = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: data.response,
-      }
+     const aiMessage: Message = {
+  id: crypto.randomUUID(),
+  role: 'assistant',
+  content: data.response,
+  stats: getStats(data),
+}
       setMessages((prev) => [...prev, aiMessage])
     } catch (error) {
       const errorMessage: Message = {
@@ -72,11 +74,18 @@ function App() {
             <p>Ask me anything to get started.</p>
           </div>
         ) : (
-          messages.map((msg) => (
-            <div key={msg.id} className={`message ${msg.role}`}>
-              {msg.content}
-            </div>
-          ))
+        messages.map((msg) => (
+  <div key={msg.id} className={`message-row ${msg.role}`}>
+    <div className={`message ${msg.role}`}>{msg.content}</div>
+
+    {msg.stats && (
+      <div className="message-stats">
+        ⏱ {msg.stats.totalDuration.toFixed(2)}s · ⚡{' '}
+        {msg.stats.tokensPerSecond.toFixed(1)} tokens/sec
+      </div>
+    )}
+  </div>
+))
         )}
 
         {isLoading && (
