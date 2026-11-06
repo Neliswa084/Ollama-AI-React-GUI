@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import type { Message , OllamaResponse } from './types'
+import type { Message, OllamaResponse } from './types'
 import logo from './assets/khanya-logo.svg'
 
 import './App.css'
@@ -9,55 +9,55 @@ function App() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
- async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-  e.preventDefault()
-  const text = input.trim()
-  if (!text) return
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const text = input.trim()
+    if (!text) return
 
-  const userMessage: Message = {
-    id: crypto.randomUUID(),
-    role: 'user',
-    content: text,
-  }
-  setMessages((prev) => [...prev, userMessage])
-  setInput('')
-  setIsLoading(true)
-
-  try {
-    const res = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'qwen2.5:0.5b',
-        prompt: text,
-        stream: false,
-      }),
-    })
-
-    if (!res.ok) throw new Error(`Ollama error: ${res.status}`)
-
-    const data: OllamaResponse = await res.json()
-
-    const aiMessage: Message = {
+    const userMessage: Message = {
       id: crypto.randomUUID(),
-      role: 'assistant',
-      content: data.response,
+      role: 'user',
+      content: text,
     }
-    setMessages((prev) => [...prev, aiMessage])
-  } catch (error) {
-    const errorMessage: Message = {
-      id: crypto.randomUUID(),
-      role: 'assistant',
-      content: 'Could not reach Ollama. Is it running?',
+    setMessages((prev) => [...prev, userMessage])
+    setInput('')
+    setIsLoading(true)
+
+    try {
+      const res = await fetch('http://localhost:11434/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'qwen2.5:0.5b',
+          prompt: text,
+          stream: false,
+        }),
+      })
+
+      if (!res.ok) throw new Error(`Ollama error: ${res.status}`)
+
+      const data: OllamaResponse = await res.json()
+
+      const aiMessage: Message = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: data.response,
+      }
+      setMessages((prev) => [...prev, aiMessage])
+    } catch (error) {
+      const errorMessage: Message = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: 'Could not reach Ollama. Is it running?',
+      }
+
+      setMessages((prev) => [...prev, errorMessage])
+      console.error(error)
     }
-    
-    setMessages((prev) => [...prev, errorMessage])
-    console.error(error)
+    finally {
+      setIsLoading(false)
+    }
   }
-  finally {
-    setIsLoading(false)
-  }
-}
 
   return (
     <div className="app">
@@ -65,27 +65,27 @@ function App() {
         <img src={logo} alt="Khanya logo" className="app-logo" />
       </header>
 
-  <main className="chat">
-  {messages.length === 0 && !isLoading ? (
-    <div className="empty-state">
-      <h2>Sawubona! I'm Khanya ✨</h2>
-      <p>Ask me anything to get started.</p>
-    </div>
-  ) : (
-    messages.map((msg) => (
-      <div key={msg.id} className={`message ${msg.role}`}>
-        {msg.content}
-      </div>
-    ))
-  )}
+      <main className="chat">
+        {messages.length === 0 && !isLoading ? (
+          <div className="empty-state">
+            <h2>Sawubona! I'm Khanya ✨</h2>
+            <p>Ask me anything to get started.</p>
+          </div>
+        ) : (
+          messages.map((msg) => (
+            <div key={msg.id} className={`message ${msg.role}`}>
+              {msg.content}
+            </div>
+          ))
+        )}
 
-  {isLoading && (
-    <div className="message assistant loading">
-      <span className="spinner"></span>
-      Khanya is thinking...
-    </div>
-  )}
-</main>
+        {isLoading && (
+          <div className="message assistant loading">
+            <span className="spinner"></span>
+            Khanya is thinking...
+          </div>
+        )}
+      </main>
 
       <form className="chat-input" onSubmit={handleSubmit}>
         <input
@@ -93,8 +93,9 @@ function App() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Message Khanya..."
+          disabled={isLoading}
         />
-        <button type="submit" disabled={!input.trim()}>
+        <button type="submit" disabled={!input.trim() || isLoading}>
           Send
         </button>
       </form>

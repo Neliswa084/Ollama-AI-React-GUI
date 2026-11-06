@@ -9,3 +9,25 @@ body {
   background: #fff8f0;
   color: #1e1b18;
 }
+
+.message.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #7a6a5c;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #f1e4d6;
+  border-top-color: #fb5607;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
