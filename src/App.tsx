@@ -7,6 +7,7 @@ import './App.css'
 function App() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
   e.preventDefault()
