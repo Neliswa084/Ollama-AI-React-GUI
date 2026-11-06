@@ -1,4 +1,4 @@
-import { useState, type FormEvent , useEffect} from 'react'
+import { useState, type FormEvent, useEffect } from 'react'
 import type { Message, OllamaResponse } from './types'
 import logo from './assets/khanya-logo.svg'
 import { getStats } from './utils/stats'
@@ -8,13 +8,13 @@ import { loadMessages, saveMessages } from './utils/storage'
 import './App.css'
 
 function App() {
-const [messages, setMessages] = useState<Message[]>(loadMessages)
+  const [messages, setMessages] = useState<Message[]>(loadMessages)
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-  saveMessages(messages)
-}, [messages])
+    saveMessages(messages)
+  }, [messages])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -31,27 +31,27 @@ const [messages, setMessages] = useState<Message[]>(loadMessages)
     setIsLoading(true)
 
     try {
-    const res = await fetch(OLLAMA_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    model: MODEL,
-    system: SYSTEM_PROMPT,
-    prompt: text,
-    stream: false,
-  }),
-})
+      const res = await fetch(OLLAMA_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: MODEL,
+          system: SYSTEM_PROMPT,
+          prompt: text,
+          stream: false,
+        }),
+      })
 
       if (!res.ok) throw new Error(`Ollama error: ${res.status}`)
 
       const data: OllamaResponse = await res.json()
 
-     const aiMessage: Message = {
-  id: crypto.randomUUID(),
-  role: 'assistant',
-  content: data.response,
-  stats: getStats(data),
-}
+      const aiMessage: Message = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: data.response,
+        stats: getStats(data),
+      }
       setMessages((prev) => [...prev, aiMessage])
     } catch (error) {
       const errorMessage: Message = {
@@ -68,10 +68,19 @@ const [messages, setMessages] = useState<Message[]>(loadMessages)
     }
   }
 
+  function handleClearChat() {
+    setMessages([])
+  }
+
   return (
     <div className="app">
       <header className="app-header">
         <img src={logo} alt="Khanya logo" className="app-logo" />
+        {messages.length > 0 && (
+          <button className="clear-btn" onClick={handleClearChat}>
+            Clear chat
+          </button>
+        )}
       </header>
 
       <main className="chat">
@@ -81,18 +90,18 @@ const [messages, setMessages] = useState<Message[]>(loadMessages)
             <p>Ask me anything to get started.</p>
           </div>
         ) : (
-        messages.map((msg) => (
-  <div key={msg.id} className={`message-row ${msg.role}`}>
-    <div className={`message ${msg.role}`}>{msg.content}</div>
+          messages.map((msg) => (
+            <div key={msg.id} className={`message-row ${msg.role}`}>
+              <div className={`message ${msg.role}`}>{msg.content}</div>
 
-    {msg.stats && (
-      <div className="message-stats">
-        ⏱ {msg.stats.totalDuration.toFixed(2)}s · ⚡{' '}
-        {msg.stats.tokensPerSecond.toFixed(1)} tokens/sec
-      </div>
-    )}
-  </div>
-))
+              {msg.stats && (
+                <div className="message-stats">
+                  ⏱ {msg.stats.totalDuration.toFixed(2)}s · ⚡{' '}
+                  {msg.stats.tokensPerSecond.toFixed(1)} tokens/sec
+                </div>
+              )}
+            </div>
+          ))
         )}
 
         {isLoading && (

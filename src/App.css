@@ -114,3 +114,23 @@
   color: #a08c7a;
   padding-left: 8px;
 }
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clear-btn {
+  padding: 8px 16px;
+  border: 1px solid #f1e4d6;
+  border-radius: 20px;
+  background: #fff;
+  color: #7a6a5c;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  border-color: #fb5607;
+  color: #fb5607;
+}
