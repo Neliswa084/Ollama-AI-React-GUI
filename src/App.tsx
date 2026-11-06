@@ -21,6 +21,7 @@ function App() {
   }
   setMessages((prev) => [...prev, userMessage])
   setInput('')
+  setIsLoading(true)
 
   try {
     const res = await fetch('http://localhost:11434/api/generate', {
