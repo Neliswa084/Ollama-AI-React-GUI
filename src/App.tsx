@@ -1,4 +1,4 @@
-import logo from './assets/khanya-logo.svg'
+import logo from './assets/khanya-logo.svg' 
 import './App.css'
 
 function App() {
