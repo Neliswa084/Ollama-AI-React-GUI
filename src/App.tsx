@@ -1,15 +1,20 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent , useEffect} from 'react'
 import type { Message, OllamaResponse } from './types'
 import logo from './assets/khanya-logo.svg'
 import { getStats } from './utils/stats'
 import { OLLAMA_URL, MODEL, SYSTEM_PROMPT } from './config'
+import { loadMessages, saveMessages } from './utils/storage'
 
 import './App.css'
 
 function App() {
-  const [messages, setMessages] = useState<Message[]>([])
+const [messages, setMessages] = useState<Message[]>(loadMessages)
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+  saveMessages(messages)
+}, [messages])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
