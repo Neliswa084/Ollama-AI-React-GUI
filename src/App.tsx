@@ -50,8 +50,12 @@ function App() {
       role: 'assistant',
       content: 'Could not reach Ollama. Is it running?',
     }
+    
     setMessages((prev) => [...prev, errorMessage])
     console.error(error)
+  }
+  finally {
+    setIsLoading(false)
   }
 }
 
@@ -61,20 +65,27 @@ function App() {
         <img src={logo} alt="Khanya logo" className="app-logo" />
       </header>
 
-      <main className="chat">
-        {messages.length === 0 ? (
-          <div className="empty-state">
-            <h2>Sawubona! I'm Khanya </h2>
-            <p>Ask me anything to get started.</p>
-          </div>
-        ) : (
-          messages.map((msg) => (
-            <div key={msg.id} className={`message ${msg.role}`}>
-              {msg.content}
-            </div>
-          ))
-        )}
-      </main>
+  <main className="chat">
+  {messages.length === 0 && !isLoading ? (
+    <div className="empty-state">
+      <h2>Sawubona! I'm Khanya ✨</h2>
+      <p>Ask me anything to get started.</p>
+    </div>
+  ) : (
+    messages.map((msg) => (
+      <div key={msg.id} className={`message ${msg.role}`}>
+        {msg.content}
+      </div>
+    ))
+  )}
+
+  {isLoading && (
+    <div className="message assistant loading">
+      <span className="spinner"></span>
+      Khanya is thinking...
+    </div>
+  )}
+</main>
 
       <form className="chat-input" onSubmit={handleSubmit}>
         <input
