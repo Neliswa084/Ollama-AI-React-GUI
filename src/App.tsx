@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import type { Message, OllamaResponse } from './types'
 import logo from './assets/khanya-logo.svg'
 import { getStats } from './utils/stats'
+import { OLLAMA_URL, MODEL, SYSTEM_PROMPT } from './config'
 
 import './App.css'
 
@@ -25,15 +26,16 @@ function App() {
     setIsLoading(true)
 
     try {
-      const res = await fetch('http://localhost:11434/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'qwen2.5:0.5b',
-          prompt: text,
-          stream: false,
-        }),
-      })
+    const res = await fetch(OLLAMA_URL, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    model: MODEL,
+    system: SYSTEM_PROMPT,
+    prompt: text,
+    stream: false,
+  }),
+})
 
       if (!res.ok) throw new Error(`Ollama error: ${res.status}`)
 
