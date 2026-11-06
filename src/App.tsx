@@ -31,7 +31,7 @@ function App() {
       <main className="chat">
         {messages.length === 0 ? (
           <div className="empty-state">
-            <h2>Sawubona! I'm Khanya ✨</h2>
+            <h2>Sawubona! I'm Khanya </h2>
             <p>Ask me anything to get started.</p>
           </div>
         ) : (
